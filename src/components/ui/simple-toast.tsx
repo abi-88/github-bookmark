@@ -10,7 +10,7 @@ interface ToastProps {
 export const Toast: React.FC<ToastProps> = ({ 
   message, 
   type, 
-  duration = 3000, 
+  duration = 3500, 
   onClose 
 }) => {
   useEffect(() => {
@@ -22,13 +22,13 @@ export const Toast: React.FC<ToastProps> = ({
   }, [duration, onClose]);
 
   const bgColor = type === 'success' 
-    ? 'bg-green-500' 
+    ? 'bg-blue-600' 
     : type === 'error' 
       ? 'bg-red-500' 
       : 'bg-blue-500';
 
   return (
-    <div className={`fixed top-4 right-4 z-50 p-4 rounded-md shadow-md ${bgColor} text-white`}>
+    <div className={`fixed top-4 right-4 z-50 p-4 rounded-md shadow-md ${bgColor} text-white max-w-md`}>
       <div className="flex items-center justify-between">
         <p>{message}</p>
         <button 
