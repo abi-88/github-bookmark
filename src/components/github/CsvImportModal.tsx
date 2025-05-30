@@ -5,7 +5,7 @@ import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
 import { getRepositoryDetails } from '../../services/githubService';
 import type { GithubRepo } from '../../types';
 import { Badge } from '../../components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Dialog, DialogContent } from '../ui/dialog';
 import { Progress } from '../ui/progress';
 import { useBookmarks } from '@/context/BookmarkContext';
 import { extractRepoInfo, parseCSV, readFileContent } from '@/lib/fileUtils';
@@ -147,31 +147,38 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[calc(100vh-10rem)] overflow-y-auto">
-        <Alert className="mb-4 bg-amber-50 border-amber-300 mt-8">
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <AlertTitle className="text-amber-700">Warning</AlertTitle>
-          <AlertDescription className="text-amber-700">
-            Closing this window or reloading the page will cause you to lose any data that hasn't been saved.
-          </AlertDescription>
-        </Alert>
-        <DialogHeader className="pb-4 border-b">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+      <DialogContent className="w-[90vw] max-w-[50vw] flex flex-col h-[80vh] max-h-[700px] p-0 overflow-hidden">
+        {/* Fixed header with title and close button */}
+        <div className="sticky top-0 z-10 bg-[#1e1e1e] pt-3 px-3 pb-2 flex items-center justify-between border-b border-gray-700">
+          <div className="flex items-center gap-2">
             <FileText className="h-6 w-6 text-[#646cff]" />
-            Import Repositories
-          </DialogTitle>
-          <DialogDescription className="mt-2 text-[#8e8e8e]">
-            Import repositories from a CSV file. The file should contain repository names in the format <code>owner/repo</code>.
-            <p>Example:</p>
-              <pre className="bg-gray-600 p-1 mt-1 rounded text-white">
-                facebook/react,
-                microsoft/typescript,
-                vercel/next.js
-              </pre>
-          </DialogDescription>
-        </DialogHeader>
+            <h2 className="text-xl bolder">Import Repositories</h2>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleClose} 
+            className="rounded-full hover:bg-gray-700"
+          >
+            <X className="h-7 w-7" size={24}/>
+          </Button>
+        </div>
         
-        <div className="space-y-5 py-5">
+        {/* Warning alert */}
+        
+        
+        {/* Error message if any */}
+        {error && (
+          <Alert variant="destructive" className="mx-6 mt-2">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto p-6 pt-3">
+          <div className="space-y-5 py-5">
           <div className="flex items-center gap-3">
             <div className="relative w-full">
               <div className="border-1 border-dashed border-[#646cff] rounded-lg p-6 flex flex-col items-center justify-center bg-gray-900 hover:bg-gray-800 transition-colors">
@@ -183,10 +190,10 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
                   <label 
                     htmlFor="csv-file-input"
                     className="flex items-center justify-center gap-2 px-4 py-2 rounded-md cursor-pointer
-                      border border-[#646cff] text-[#646cff] hover:bg-[#646cff] hover:text-white transition-colors"
+                      border border-[#646cff] text-[#646cff] bg-[#646cff] text-white transition-colors"
                   >
                     <Upload className="h-4 w-4" />
-                    <span>Select CSV File</span>
+                    <span className='bold'>Select CSV File</span>
                   </label>
                   
                   <input
@@ -220,13 +227,22 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
                       disabled={isUploading || isValidating}
                       className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors"
                     >
-                      Extract GitHub Info
+                      {validationResult?.invalid?.length || validationResult?.valid?.length?"See Extracted Data":"Extract GitHub Info"}
+                      
                     </Button>
                   </div>
                 )}
               </div>
             </div>
           </div>
+
+          <Alert className="bg-amber-50 border-amber-300">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTitle className="text-amber-700">Warning</AlertTitle>
+            <AlertDescription className="text-amber-700">
+              Closing this window or reloading the page will cause you to lose any data that hasn't been saved.
+            </AlertDescription>
+          </Alert>
           
           {isUploading && (
             <Alert className="bg-[#f0f0ff] border-[#646cff]">
@@ -328,9 +344,11 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
               )}
             </div>
           )}
+          </div>
         </div>
         
-        <DialogFooter className="flex justify-between sm:justify-between pt-4 border-t">
+        {/* Fixed footer with buttons */}
+        <div className="sticky bottom-0 bg-[#1e1e1e] p-4 border-t border-gray-700 flex justify-between items-center">
           <Button disabled={importingBookMark} variant="outline" onClick={handleClose} className="border-gray-300">
             Cancel
           </Button>
@@ -340,12 +358,11 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
               onClick={handleImport} 
               className="bg-[#646cff] hover:bg-[#535bf2] text-white transition-colors"
             >
-              {importingBookMark?<Loader2 className="mr-2 h-4 w-4 animate-spin" />:     <Github className="h-4 w-4 mr-2" />}
-         
+              {importingBookMark ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Github className="h-4 w-4 mr-2" />}
               Add {validationResult.valid.length} Repositories to Bookmarks
             </Button>
           )}
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
