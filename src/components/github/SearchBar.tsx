@@ -51,7 +51,7 @@ export function SearchBar({ onSearch, isLoading = false,setSearchType,searchType
           placeholder={`Search GitHub ${searchType}...`}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full pl-36 h-10"
+          className="w-full pl-36 h-10 border-0 bg-gray-700"
         />
       </div>
       

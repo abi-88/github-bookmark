@@ -47,15 +47,15 @@ export function BookmarkList({ bookmarks, onRemoveBookmark, onImportBookmarks }:
             placeholder="Search bookmarks..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 border-0 bg-gray-700 h-10"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         </div>
         {onImportBookmarks && (
           <Button 
-            variant="outline" 
+            variant="default" 
             onClick={() => setImportModalOpen(true)}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap bg-blue-600 hover:bg-blue-700 h-10"
           >
             <Upload className="h-4 w-4 mr-2" />
             Import CSV
