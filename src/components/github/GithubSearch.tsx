@@ -6,8 +6,8 @@ import { RepositoryCard } from './RepositoryCard';
 import { searchUsers, searchRepositories, getUserRepositories } from '../../services/githubService';
 import { useBookmarks } from '../../context/BookmarkContext';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { Loader2 } from 'lucide-react';
 import { RepositoryCardSkeleton } from '../skelton/RepositoryCardSkeleton';
+import { UserCardSkeleton } from '../skelton/UserCardSkeleton';
 
 export function GithubSearch() {
   const [isLoading, setIsLoading] = useState(false);
@@ -148,8 +148,10 @@ export function GithubSearch() {
           {searchType === 'users' && (
             <>
               <h2 className="text-lg font-medium">Users</h2>
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+              <div className="space-y-3">
+                {Array(3).fill(0).map((_, index) => (
+                  <UserCardSkeleton key={index} />
+                ))}
               </div>
             </>
           )}
