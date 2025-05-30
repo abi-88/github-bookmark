@@ -48,7 +48,7 @@ export function SearchBar({ onSearch, isLoading = false,setSearchType,searchType
         
         <Input
           type="text"
-          placeholder={`Search GitHub ${searchType}...`}
+          placeholder={`Search GitHub ${searchType === 'users' ? 'Users' : 'Repositories'}...`}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full pl-36 h-10 border-0 bg-gray-700"
