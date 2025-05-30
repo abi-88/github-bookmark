@@ -35,7 +35,8 @@ export function BookmarkProvider({ children }: { children: any }) {
       const { data, error } = await supabase
         .from('github_repos')
         .select('*')
-        .eq('bookmarked_user_id', user.email);
+        .eq('bookmarked_user_id', user.email)
+        .order('bookmarked_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching bookmarks from Supabase:', error);
@@ -129,7 +130,7 @@ export function BookmarkProvider({ children }: { children: any }) {
         doc_id: data?.[0]?.doc_id
       };
       
-      setBookmarks(prev => [...prev, bookmarkedRepo]);
+      setBookmarks(prev => [bookmarkedRepo,...prev]);
     } catch (error) {
       console.error('Error adding bookmark:', error);
     }finally{
