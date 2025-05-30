@@ -16,6 +16,7 @@ export function GithubSearch() {
   const [users, setUsers] = useState<GithubUser[]>([]);
   const [repositories, setRepositories] = useState<GithubRepo[]>([]);
   const [expandedUsers, setExpandedUsers] = useState<string[]>([]);
+  const [loadingRepos, setLoadingRepos] = useState<string[]>([]);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const includeUserSearch =  searchType =="users"
 
@@ -24,6 +25,7 @@ export function GithubSearch() {
     setError(null);
     setSearchType(type);
     setExpandedUsers([]);
+    setLoadingRepos([]);
     setRepositories([]);
     
     try {
@@ -62,6 +64,7 @@ export function GithubSearch() {
     try {
       // Show loading indicator just for this user section
       setExpandedUsers([...expandedUsers, username]);
+      setLoadingRepos(prev => [...prev, username]);
       
       const userRepos = await getUserRepositories(username);
       
@@ -74,11 +77,16 @@ export function GithubSearch() {
       setRepositories(prev => {
         // Filter out any existing repos for this user
         const filteredRepos = prev.filter(repo => repo._ownerUsername !== username);
+        // Even if userReposWithOwner is empty, we still add it to mark that we've loaded this user's repos
         return [...filteredRepos, ...userReposWithOwner];
       });
+      
+      // Remove from loading state after repositories are loaded
+      setLoadingRepos(prev => prev.filter(user => user !== username));
     } catch (err) {
       // If there's an error, remove the user from expanded users
       setExpandedUsers(expandedUsers.filter(user => user !== username));
+      setLoadingRepos(prev => prev.filter(user => user !== username));
       setError(`Failed to fetch repositories for ${username}.`);
     }
   };
@@ -195,7 +203,14 @@ export function GithubSearch() {
                             ))
                         ) : (
                           <div className="py-2 text-gray-500">
-                            Loading repositories...
+                            {loadingRepos.includes(user.login) ? (
+                              <div className="flex items-center space-x-2">
+                                <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                                <span>Loading repositories...</span>
+                              </div>
+                            ) : (
+                              "No public repositories for this account"
+                            )}
                           </div>
                         )}
                     </div>
