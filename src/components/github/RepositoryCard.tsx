@@ -42,7 +42,7 @@ export function RepositoryCard({
           
           <div className="flex-grow">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold">{repo.full_name}</h3>
+              <h3 className="bolder">{repo.full_name}</h3>
               <a 
                 href={repo.html_url} 
                 target="_blank" 

@@ -114,7 +114,7 @@ const AuthPage = () => {
                 type="button"
                 onClick={()=>{showToast("Forgot Password", "success")}}
                   variant="link"
-                  className="p-0 h-auto text-xs text-blue-600 hover:underline"
+                  className="p-0 h-auto text-xs text-[#646cff] hover:underline"
                 >
                   Forgot Password?
                 </Button>
@@ -146,7 +146,7 @@ const AuthPage = () => {
             className="w-full transition-colors hover:bg-[#535bf2] bg-[#646cff] h-12 mt-2"
             disabled={isLoading}
           >
-            {isLoading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
+            {isLoading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
           </Button>
         </form>
       </CardContent>
@@ -156,7 +156,7 @@ const AuthPage = () => {
           {isLogin ? "Don't have an account?" : "Already have an account?"}
           <Button
             variant="link"
-            className="pl-1 text-blue-600 hover:underline"
+            className="pl-1 text-[#646cff] hover:underline"
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? "Sign Up" : "Login"}

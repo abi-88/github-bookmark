@@ -186,7 +186,7 @@ export function BookmarkStats({ stats }: BookmarkStatsProps) {
               boxShadow: '0 0 4px 0px #646cff',
             }}>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold">Bookmark Trends</CardTitle>
+          <CardTitle className="text-2xl bold">Bookmark Trends</CardTitle>
         </CardHeader>
         <CardContent>
           {stats.length > 0 ? (
@@ -200,8 +200,8 @@ export function BookmarkStats({ stats }: BookmarkStatsProps) {
                 <line x1="9" y1="9" x2="15" y2="9"></line>
                 <line x1="9" y1="13" x2="15" y2="13"></line>
               </svg>
-              <h3 className="mt-4 text-lg font-medium text-gray-400">No bookmark data yet</h3>
-              <p className="mt-2 text-sm text-gray-500">
+              <span className="mt-4 text-xl font-medium text-gray-400 bolder">No bookmark data yet</span>
+              <p className="mt-2 text-md text-gray-500">
                 Start bookmarking repositories to see your activity trends over time.
               </p>
             </div>

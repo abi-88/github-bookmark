@@ -248,8 +248,8 @@ export function GithubSearch() {
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <h3 className="mt-4 text-lg font-medium text-gray-400">No results found</h3>
-              <p className="mt-2 text-sm text-gray-500 max-w-md">
+              <span className="mt-4 text-xl font-medium text-gray-400 bolder">No results found</span>
+              <p className="mt-2 text-md text-gray-500 max-w-md">
                 Try searching with different keywords or check for typos.
               </p>
             </div>

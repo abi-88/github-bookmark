@@ -15,8 +15,23 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@font-face {
+  font-family: "Nunito sans";
+  src: url("/fonts/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf")
+    format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Or for specific elements */
+* {
+  font-family: "Nunito sans", Arial, sans-serif;
+}
+
 button{
   cursor: pointer;
+  font-family: "Nunito sans", Arial, sans-serif;
+  font-weight: 700;
 }
 
 a {
@@ -35,6 +50,7 @@ body {
   min-width: 320px;
   width: 100vw;
   min-height: 100vh;
+  font-family: "Nunito sans", Arial, sans-serif;
 }
 
 h1 {

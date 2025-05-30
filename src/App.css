@@ -37,3 +37,37 @@
 .read-the-docs {
   color: #888;
 }
+
+@layer utilities {
+  .ultra-thin {
+    font-weight: 300;
+  }
+
+  .extra-thin {
+    font-weight: 400;
+  }
+
+  .thin {
+    font-weight: 500;
+  }
+
+  .semi-bold {
+    font-weight: 600;
+  }
+
+  .bold {
+    font-weight: 700;
+  }
+
+  .bolder {
+    font-weight: 800;
+  }
+
+  .extra-bold {
+    font-weight: 900;
+  }
+
+  .full-bold {
+    font-weight: 1000;
+  }
+}

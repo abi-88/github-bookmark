@@ -23,7 +23,7 @@ export function UserCard({ user, onViewRepositories, expandedUsers }: UserCardPr
           
           <div className="flex-grow">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-lg font-semibold">{user.name || user.login}</h3>
+              <h3 className="text-lg bolder">{user.name || user.login}</h3>
               {user.name && <span className="text-sm text-gray-500">@{user.login}</span>}
               <a 
                 href={user.html_url} 

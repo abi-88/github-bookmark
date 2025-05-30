@@ -20,7 +20,7 @@ export function GithubTabs({ activeTab }: GithubTabsProps) {
               boxShadow: '0 0 4px 0px #646cff',
             }}>
           <CardHeader>
-            <CardTitle className='text-2xl font-semibold'>Search GitHub</CardTitle>
+            <CardTitle className='text-2xl bold'>Search GitHub</CardTitle>
             <CardDescription className='text-[#8e8e8e]'>
               Search for GitHub users and repositories
             </CardDescription>
@@ -36,7 +36,7 @@ export function GithubTabs({ activeTab }: GithubTabsProps) {
               boxShadow: '0 0 4px 0px #646cff',
             }}>
           <CardHeader>
-            <CardTitle className='text-2xl font-semibold'>My Bookmarks</CardTitle>
+            <CardTitle className='text-2xl bold'>My Bookmarks</CardTitle>
             <CardDescription className='text-[#8e8e8e]'>
               View and manage your bookmarked repositories
             </CardDescription>
