@@ -1,0 +1,218 @@
+import { useState } from 'react';
+import type { GithubUser, GithubRepo } from '../../types';
+import { SearchBar } from './SearchBar';
+import { UserCard } from './UserCard';
+import { RepositoryCard } from './RepositoryCard';
+import { searchUsers, searchRepositories, getUserRepositories } from '../../services/githubService';
+import { useBookmarks } from '../../context/BookmarkContext';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Loader2 } from 'lucide-react';
+
+export function GithubSearch() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searchType, setSearchType] = useState<'users' | 'repositories'>('repositories');
+  const [users, setUsers] = useState<GithubUser[]>([]);
+  const [repositories, setRepositories] = useState<GithubRepo[]>([]);
+  const [expandedUsers, setExpandedUsers] = useState<string[]>([]);
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const includeUserSearch =  searchType =="users"
+
+  const handleSearch = async (query: string, type: 'users' | 'repositories') => {
+    setIsLoading(true);
+    setError(null);
+    setSearchType(type);
+    setExpandedUsers([]);
+    setRepositories([]);
+    
+    try {
+      if (type === 'users') {
+        // For user search, only fetch users initially
+        const userResults = await searchUsers(query);
+        setUsers(userResults);
+      } else if (type === 'repositories') {
+        // For repository search
+        const repoResults = await searchRepositories(query);
+        setRepositories(repoResults);
+        
+        if (includeUserSearch) {
+          // If user search is included, fetch users as well
+          const userResults = await searchUsers(query);
+          setUsers(userResults);
+        } else {
+          setUsers([]);
+        }
+      }
+    } catch (err) {
+      setError('Failed to search GitHub. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleToggleUserRepos = async (username: string) => {
+    if (expandedUsers.includes(username)) {
+      // Collapse this user's repositories
+      setExpandedUsers(expandedUsers.filter(user => user !== username));
+      return;
+    }
+    
+    // Only fetch repositories for this specific user when expanded
+    try {
+      // Show loading indicator just for this user section
+      setExpandedUsers([...expandedUsers, username]);
+      
+      const userRepos = await getUserRepositories(username);
+      
+      // Add the user's repositories to the existing repositories
+      const userReposWithOwner = userRepos.map(repo => ({
+        ...repo,
+        _ownerUsername: username // Add a temporary property to track which user these repos belong to
+      }));
+      
+      setRepositories(prev => {
+        // Filter out any existing repos for this user
+        const filteredRepos = prev.filter(repo => repo._ownerUsername !== username);
+        return [...filteredRepos, ...userReposWithOwner];
+      });
+    } catch (err) {
+      // If there's an error, remove the user from expanded users
+      setExpandedUsers(expandedUsers.filter(user => user !== username));
+      setError(`Failed to fetch repositories for ${username}.`);
+    }
+  };
+  
+  // const handleToggleUserSearch = () => {
+  //   const newIncludeUserSearch = !includeUserSearch;
+    
+  //   if (newIncludeUserSearch && searchType === 'repositories') {
+  //     // If we're enabling user search and there's an active repository search, fetch users
+  //     const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+  //     if (searchInput && searchInput.value.trim()) {
+  //       setIsLoading(true);
+  //       searchUsers(searchInput.value.trim())
+  //         .then(results => {
+  //           setUsers(results);
+  //           setIsLoading(false);
+  //         })
+  //         .catch(() => {
+  //           setError('Failed to search GitHub users.');
+  //           setIsLoading(false);
+  //         });
+  //     }
+  //   } else if (!newIncludeUserSearch) {
+  //     // If we're disabling user search, clear users and expanded users
+  //     setUsers([]);
+  //     setExpandedUsers([]);
+  //     // Also clear any user repositories
+  //     setRepositories(prev => prev.filter(repo => !repo._ownerUsername));
+  //   }
+  // };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col space-y-4">
+        <SearchBar onSearch={handleSearch} isLoading={isLoading} setSearchType={setSearchType} searchType={searchType}/>
+        {/* {searchType=="users"?
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="include-users"
+            className='w-10 h-5 data-[state=checked]:bg-blue-500' 
+            checked={includeUserSearch} 
+            onCheckedChange={handleToggleUserSearch}
+          />
+          <Label htmlFor="include-users">Show user repositories</Label>
+        </div>:null} */}
+      </div>
+      
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      {isLoading && (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        </div>
+      )}
+      
+      {!isLoading && !error && (
+        <>
+          {/* User results section */}
+          {(searchType === 'users' || includeUserSearch) && users.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-medium">Users</h2>
+              {users.map(user => (
+                <div key={user.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <UserCard
+                      user={user}
+                      onViewRepositories={() => handleToggleUserRepos(user.login)}
+                      expandedUsers={expandedUsers}
+                    />
+                    
+                  </div>
+                  
+                  {/* User's repositories (shown when expanded) */}
+                  {expandedUsers.includes(user.login) && (
+                    <div className="pl-6 border-l-1 border-l-[#646cff] border-gray-200 space-y-3 mt-2">
+                      <h3 className="text-md font-medium">Repositories for {user.login}</h3>
+                      {repositories
+                        .filter(repo => repo._ownerUsername === user.login)
+                        .length > 0 ? (
+                          repositories
+                            .filter(repo => repo._ownerUsername === user.login)
+                            .map(repo => (
+                              <RepositoryCard
+                                key={repo.id}
+                                repo={repo}
+                                isBookmarked={isBookmarked(repo.id)}
+                                onBookmark={addBookmark}
+                                onRemoveBookmark={removeBookmark}
+                              />
+                            ))
+                        ) : (
+                          <div className="py-2 text-gray-500">
+                            Loading repositories...
+                          </div>
+                        )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Repository results section (only for direct repo search) */}
+          {searchType === 'repositories' && repositories.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-medium">Repositories</h2>
+              {repositories
+                .filter(repo => !repo._ownerUsername) // Only show repos from direct repo search
+                .map(repo => (
+                  <RepositoryCard
+                    key={repo.id}
+                    repo={repo}
+                    isBookmarked={isBookmarked(repo.id)}
+                    onBookmark={addBookmark}
+                    onRemoveBookmark={removeBookmark}
+                  />
+                ))}
+            </div>
+          )}
+          
+          {/* No results message */}
+          {!isLoading && 
+           ((searchType === 'users' && users.length === 0) || 
+            (searchType === 'repositories' && repositories.filter(repo => !repo._ownerUsername).length === 0 && !includeUserSearch)) && 
+           users.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              No results found. Try a different search term.
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
