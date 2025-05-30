@@ -70,9 +70,24 @@ export function BookmarkStats({ stats }: BookmarkStatsProps) {
       .attr('transform', 'rotate(-45)')
       .style('text-anchor', 'end');
     
-    // Add Y axis
+    // Create exactly 5 integer ticks for Y axis
+    const maxValue = d3.max(filledStats, d => d.count) || 5;
+    const tickValues = [0, 1, 2, 3, 4, 5].filter(v => v <= maxValue);
+    if (tickValues.length < 5) {
+      // If we have less than 5 values, generate evenly spaced integers up to max
+      const step = Math.ceil(maxValue / 4); // 4 steps for 5 values (0 to max)
+      tickValues.length = 0; // Clear the array
+      for (let i = 0; i <= 4; i++) {
+        tickValues.push(i * step);
+      }
+    }
+    
+    // Add Y axis with custom integer ticks
     svg.append('g')
-      .call(d3.axisLeft(y).ticks(5));
+      .call(d3.axisLeft(y)
+        .tickValues(tickValues)
+        .tickFormat((d: any) => d.toString())
+      );
     
     // Add Y axis label
     svg.append('text')
@@ -167,7 +182,9 @@ export function BookmarkStats({ stats }: BookmarkStatsProps) {
 
   return (
     <div className="space-y-6">
-      <Card className="border-0" style={{ boxShadow: '0 0 20px 0 #646cff' }}>
+      <Card className='border-0 bg-[#1e1e1e]' style={{
+              boxShadow: '0 0 4px 0px #646cff',
+            }}>
         <CardHeader>
           <CardTitle className="text-2xl font-semibold">Bookmark Trends</CardTitle>
         </CardHeader>

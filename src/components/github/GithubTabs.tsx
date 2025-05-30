@@ -13,11 +13,11 @@ export function GithubTabs({ activeTab }: GithubTabsProps) {
   const { bookmarks, removeBookmark, importBookmarks, getBookmarkStats } = useBookmarks();
 
   return (
-    <Tabs value={activeTab} className="w-full mt-10">
+    <Tabs value={activeTab} className="w-full mt-10 mb-10">
       
       <TabsContent value="search" className="space-y-2">
-        <Card className='border-0' style={{
-              boxShadow: '0 0 20px 0 #646cff',
+        <Card className='border-0 bg-[#1e1e1e]' style={{
+              boxShadow: '0 0 4px 0px #646cff',
             }}>
           <CardHeader>
             <CardTitle className='text-2xl font-semibold'>Search GitHub</CardTitle>
@@ -32,8 +32,8 @@ export function GithubTabs({ activeTab }: GithubTabsProps) {
       </TabsContent>
       
       <TabsContent value="bookmarks" className="space-y-2">
-        <Card className='border-0' style={{
-              boxShadow: '0 0 20px 0 #646cff',
+        <Card className='border-0 bg-[#1e1e1e]' style={{
+              boxShadow: '0 0 4px 0px #646cff',
             }}>
           <CardHeader>
             <CardTitle className='text-2xl font-semibold'>My Bookmarks</CardTitle>
