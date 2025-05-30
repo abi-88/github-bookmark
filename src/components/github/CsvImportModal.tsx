@@ -262,7 +262,7 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
             </Alert>
           )}
           
-          {isValidating && (
+          
             <div className="space-y-2 mb-4">
               <div className="flex justify-between mb-1">
                 <span className="text-sm font-medium">Processing URLs: {processedUrls}/{totalUrls}</span>
@@ -273,7 +273,7 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
                 Current: {currentUrl}
               </p>
             </div>
-          )}
+        
           
           {error && (
             <Alert variant="destructive" className="border-2">
