@@ -11,11 +11,11 @@ interface UserCardProps {
 
 export function UserCard({ user, onViewRepositories, expandedUsers }: UserCardProps) {
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md w-full border-[1px] border-[#737373]">
-      <CardContent className="p-4">
+    <Card className="overflow-hidden transition-all hover:shadow-md w-full border-[1px] border-[#737373] py-3">
+      <CardContent className="px-4">
         <div className="flex items-center gap-4">
           <div className="flex-shrink-0">
-            <Avatar className="h-16 w-16 border shadow-sm">
+            <Avatar className="h-12 w-12 border shadow-sm">
               <AvatarImage src={user.avatar_url} alt={user.login} />
               <AvatarFallback>{user.login.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
