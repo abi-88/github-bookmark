@@ -15,6 +15,7 @@ interface BookmarkContextType {
   getBookmarkStats: () => BookmarkStats[];
   removingBookmark: number;
   addingBookMark:number;
+  importingBookMark:boolean;
 }
 
 const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
@@ -24,6 +25,7 @@ export function BookmarkProvider({ children }: { children: any }) {
   const [bookmarks, setBookmarks] = useState<BookmarkedRepo[]>([]);
   const [removingBookmark, setRemovingBookmark] = useState<number>(0);
   const [addingBookMark, setAddingBookMark] = useState<number>(0);
+  const [importingBookMark, setImportingBookMark] = useState<boolean>(false);
   const { user, isAuthenticated } = useAuth();
 
   const fetchBookmarks = async () => {
@@ -188,6 +190,7 @@ export function BookmarkProvider({ children }: { children: any }) {
     if (newRepos.length === 0) return;
     
     try {
+      setImportingBookMark(true)
       // Prepare data for Supabase
       const bookmarkedAt = new Date().toISOString();
       const supabaseData = newRepos.map(repo => ({
@@ -231,6 +234,8 @@ export function BookmarkProvider({ children }: { children: any }) {
       setBookmarks(prev => [...prev, ...newBookmarks]);
     } catch (error) {
       console.error('Error importing bookmarks:', error);
+    }finally{
+      setImportingBookMark(false)
     }
   };
 
@@ -258,7 +263,8 @@ export function BookmarkProvider({ children }: { children: any }) {
         importBookmarks,
         getBookmarkStats,
         removingBookmark,
-        addingBookMark
+        addingBookMark,
+        importingBookMark
       }}
     >
       {children}

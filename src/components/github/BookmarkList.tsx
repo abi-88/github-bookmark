@@ -10,10 +10,9 @@ import { CsvImportModal } from './CsvImportModal';
 interface BookmarkListProps {
   bookmarks: BookmarkedRepo[];
   onRemoveBookmark: (doc_id: string) => void;
-  onImportBookmarks?: (repos: GithubRepo[]) => void;
 }
 
-export function BookmarkList({ bookmarks, onRemoveBookmark, onImportBookmarks }: BookmarkListProps) {
+export function BookmarkList({ bookmarks, onRemoveBookmark }: BookmarkListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [importModalOpen, setImportModalOpen] = useState(false);
   
@@ -51,7 +50,7 @@ export function BookmarkList({ bookmarks, onRemoveBookmark, onImportBookmarks }:
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         </div>
-        {onImportBookmarks && (
+
           <Button 
             variant="default" 
             onClick={() => setImportModalOpen(true)}
@@ -60,14 +59,13 @@ export function BookmarkList({ bookmarks, onRemoveBookmark, onImportBookmarks }:
             <Upload className="h-4 w-4 mr-2" />
             Import CSV
           </Button>
-        )}
+
       </div>
       
-      {onImportBookmarks && (
+      {importModalOpen && (
         <CsvImportModal
           open={importModalOpen}
           onOpenChange={setImportModalOpen}
-          onImport={onImportBookmarks}
         />
       )}
       

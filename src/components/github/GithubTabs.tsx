@@ -10,7 +10,7 @@ interface GithubTabsProps {
 }
 
 export function GithubTabs({ activeTab }: GithubTabsProps) {
-  const { bookmarks, removeBookmark, importBookmarks, getBookmarkStats } = useBookmarks();
+  const { bookmarks, removeBookmark, getBookmarkStats } = useBookmarks();
 
   return (
     <Tabs value={activeTab} className="w-full mt-10 mb-10">
@@ -45,7 +45,6 @@ export function GithubTabs({ activeTab }: GithubTabsProps) {
             <BookmarkList 
               bookmarks={bookmarks}
               onRemoveBookmark={removeBookmark}
-              onImportBookmarks={importBookmarks}
             />
           </CardContent>
         </Card>
