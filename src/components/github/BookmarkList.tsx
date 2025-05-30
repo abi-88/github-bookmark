@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { BookmarkedRepo, GithubRepo } from '../../types';
+import type { BookmarkedRepo } from '../../types';
 import { RepositoryCard } from './RepositoryCard';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';

@@ -13,7 +13,6 @@ import { extractRepoInfo, parseCSV, readFileContent } from '@/lib/fileUtils';
 interface CsvImportModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onImport: (repos: GithubRepo[]) => void;
 }
 
 interface ValidationResult {
