@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { GithubRepo, BookmarkedRepo, BookmarkStats } from '../types';
 import { supabase } from '../client/supabase';
 import { useAuth } from './AuthContext';
+import { useToast } from '@/components/ui/simple-toast';
 
 
 interface BookmarkContextType {
@@ -12,12 +13,17 @@ interface BookmarkContextType {
   isBookmarked: (repoId: number) => boolean;
   importBookmarks: (repos: GithubRepo[]) => void;
   getBookmarkStats: () => BookmarkStats[];
+  removingBookmark: number;
+  addingBookMark:number;
 }
 
 const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
 
 export function BookmarkProvider({ children }: { children: any }) {
+  const { showToast } = useToast()
   const [bookmarks, setBookmarks] = useState<BookmarkedRepo[]>([]);
+  const [removingBookmark, setRemovingBookmark] = useState<number>(0);
+  const [addingBookMark, setAddingBookMark] = useState<number>(0);
   const { user, isAuthenticated } = useAuth();
 
   const fetchBookmarks = async () => {
@@ -85,6 +91,7 @@ export function BookmarkProvider({ children }: { children: any }) {
     const bookmarkedAt = new Date().toISOString();
     
     try {
+      setAddingBookMark(repo.id)
       // Insert into Supabase
       const { data, error } = await supabase
         .from('github_repos')
@@ -107,7 +114,10 @@ export function BookmarkProvider({ children }: { children: any }) {
       
       if (error) {
         console.error('Error adding bookmark to Supabase:', error);
+        showToast("Error adding bookmark to Supabase", "error");
         return;
+      }else{
+        showToast("Repo added to bookmark list successfully", "success");
       }
       
       // Update local state with the doc_id from Supabase
@@ -120,12 +130,13 @@ export function BookmarkProvider({ children }: { children: any }) {
       setBookmarks(prev => [...prev, bookmarkedRepo]);
     } catch (error) {
       console.error('Error adding bookmark:', error);
+    }finally{
+      setAddingBookMark(0)
     }
   };
 
   const removeBookmark = async (doc_id: string,id:number|string) => {
-    if (!user?.email) return;
-    console.log(doc_id,id)
+    if (!user?.email) return; 
     // Find the bookmark to get its doc_id
     let bookmark:BookmarkedRepo|undefined;
     if(doc_id){
@@ -133,10 +144,10 @@ export function BookmarkProvider({ children }: { children: any }) {
     }else if(id){
        bookmark = bookmarks.find(b => b.id === id);
     }
-   console.log(bookmark)
     if (!bookmark) return;
     
     try {
+      setRemovingBookmark(bookmark?.id ||0)
       // Delete from Supabase using doc_id if available, otherwise fallback to id
       const query = supabase
         .from('github_repos')
@@ -150,7 +161,10 @@ export function BookmarkProvider({ children }: { children: any }) {
       
       if (error) {
         console.error('Error removing bookmark from Supabase:', error);
+        showToast("Error removing bookmark from Supabase", "error");
         return;
+      }else{
+        showToast("Repo removed from bookmark list successfully", "success");
       }
       
       // Update local state
@@ -158,6 +172,8 @@ export function BookmarkProvider({ children }: { children: any }) {
       fetchBookmarks()
     } catch (error) {
       console.error('Error removing bookmark:', error);
+    }finally{
+      setRemovingBookmark(0)
     }
   };
 
@@ -240,7 +256,9 @@ export function BookmarkProvider({ children }: { children: any }) {
         removeBookmark, 
         isBookmarked, 
         importBookmarks,
-        getBookmarkStats
+        getBookmarkStats,
+        removingBookmark,
+        addingBookMark
       }}
     >
       {children}

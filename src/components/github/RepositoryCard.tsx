@@ -2,9 +2,10 @@ import type { BookmarkedRepo, GithubRepo } from '../../types';
 import { Card, CardContent } from '../../components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Button } from '../../components/ui/button';
-import { ExternalLink, Star, GitFork, Bookmark, BookmarkCheck } from 'lucide-react';
+import { ExternalLink, Star, GitFork, Bookmark, BookmarkCheck, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '../../components/ui/badge';
+import { useBookmarks } from '@/context/BookmarkContext';
 
 interface RepositoryCardProps {
   repo: BookmarkedRepo;
@@ -19,6 +20,9 @@ export function RepositoryCard({
   onBookmark, 
   onRemoveBookmark 
 }: RepositoryCardProps) {
+
+    const { removingBookmark,addingBookMark } = useBookmarks();
+
   const handleBookmarkClick = () => {
     if (isBookmarked && onRemoveBookmark) {
       onRemoveBookmark(repo.doc_id||"",repo.id);
@@ -84,12 +88,20 @@ export function RepositoryCard({
           >
             {isBookmarked ? (
               <>
+              {removingBookmark == repo.id ? (
+                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+              ):(
                 <BookmarkCheck className="h-4 w-4 mr-1" color='green'/>
+              )}
                 Bookmarked
               </>
             ) : (
               <>
+              {addingBookMark == repo.id ? (
+                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+              ):(
                 <Bookmark className="h-4 w-4 mr-1" />
+              )}
                 Bookmark
               </>
             )}
