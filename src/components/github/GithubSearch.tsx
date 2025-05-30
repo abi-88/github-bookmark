@@ -207,8 +207,15 @@ export function GithubSearch() {
            ((searchType === 'users' && users.length === 0) || 
             (searchType === 'repositories' && repositories.filter(repo => !repo._ownerUsername).length === 0 && !includeUserSearch)) && 
            users.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              No results found. Try a different search term.
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#646cff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-gray-400">No results found</h3>
+              <p className="mt-2 text-sm text-gray-500 max-w-md">
+                Try searching with different keywords or check for typos.
+              </p>
             </div>
           )}
         </>

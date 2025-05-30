@@ -70,10 +70,29 @@ export function BookmarkList({ bookmarks, onRemoveBookmark }: BookmarkListProps)
       )}
       
       {filteredBookmarks.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          {bookmarks.length === 0 
-            ? "You haven't bookmarked any repositories yet."
-            : "No bookmarks match your search."}
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          {bookmarks.length === 0 ? (
+            <>
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#646cff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-gray-400">No bookmarks yet</h3>
+              <p className="mt-2 text-sm text-gray-500 max-w-md">
+                Start bookmarking repositories to see them listed here.
+              </p>
+            </>
+          ) : (
+            <>
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#646cff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-gray-400">No matching bookmarks</h3>
+              <p className="mt-2 text-sm text-gray-500 max-w-md">
+                Try searching with different keywords or check for typos.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-6">

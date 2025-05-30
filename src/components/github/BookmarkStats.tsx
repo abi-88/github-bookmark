@@ -189,9 +189,23 @@ export function BookmarkStats({ stats }: BookmarkStatsProps) {
           <CardTitle className="text-2xl font-semibold">Bookmark Trends</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="w-full overflow-x-auto h-[350px]">
-            <svg ref={lineChartRef} width="100%" height="350" />
-          </div>
+          {stats.length > 0 ? (
+            <div className="w-full overflow-x-auto h-[350px]">
+              <svg ref={lineChartRef} width="100%" height="350" />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-[350px] text-center">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#646cff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <line x1="9" y1="9" x2="15" y2="9"></line>
+                <line x1="9" y1="13" x2="15" y2="13"></line>
+              </svg>
+              <h3 className="mt-4 text-lg font-medium text-gray-400">No bookmark data yet</h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Start bookmarking repositories to see your activity trends over time.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
