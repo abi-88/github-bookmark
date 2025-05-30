@@ -26,7 +26,6 @@ const AuthPage = () => {
       if (isLogin) {
         const {success,message} = await login(email, password);
         if (success) {
-          showToast(message||"Login successful! Welcome back!", "success");
           navigate("/home");
         } else {
           showToast(message||"Login failed: Invalid email or password", "error");
