@@ -34,6 +34,7 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
   const [processedUrls, setProcessedUrls] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const { importBookmarks,importingBookMark } = useBookmarks();
 
   const resetState = () => {
@@ -223,12 +224,19 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
                       </Button>
                     </div>
                     <Button
-                      onClick={handleExtract}
+                      onClick={() => {
+                        if (validationResult?.invalid?.length || validationResult?.valid?.length) {
+                          // Scroll to results section
+                          resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                          // Extract data
+                          handleExtract();
+                        }
+                      }}
                       disabled={isUploading || isValidating}
                       className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors"
                     >
-                      {validationResult?.invalid?.length || validationResult?.valid?.length?"See Extracted Data":"Extract GitHub Info"}
-                      
+                      {validationResult?.invalid?.length || validationResult?.valid?.length ? "See Extracted Data" : "Extract GitHub Info"}
                     </Button>
                   </div>
                 )}
@@ -276,7 +284,7 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
           )}
           
           {validationResult && (
-            <div className="space-y-4">
+            <div ref={resultsRef} className="space-y-4">
               {validationResult.valid.length > 0 && (
                 <div className="rounded-lg border-2 border-green-500 bg-green-50 p-4">
                   <div className="flex items-center gap-2 mb-3">
