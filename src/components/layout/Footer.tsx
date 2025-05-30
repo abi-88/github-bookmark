@@ -8,15 +8,15 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Github className="h-5 w-5" />
-            <span className="text-sm">GitHub Bookmark</span>
+            <Github className="h-5 w-5" color="#646cff"/>
+            <span className="text-sm bold text-gray-400">GitHub Bookmark</span>
           </div>
           
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground bold text-gray-400">
             &copy; {currentYear} GitHub Bookmark. All rights reserved.
           </div>
           
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1 text-sm bold text-[#646cff]">
             - Abin E - 
           </div>
         </div>
