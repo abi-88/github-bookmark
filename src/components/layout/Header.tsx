@@ -45,11 +45,14 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 {user?.username?.substring(0, 2).toUpperCase() || <User className="h-4 w-4" />}
               </AvatarFallback>
             </Avatar>
-            <span className="hidden text-lg md:inline-block bolder">{user?.username}</span>
+            <div className="flex flex-col">
+              <span className="hidden text-md md:inline-block bolder">{user?.username}</span>
+              <span className="text-xs bold text-[#646cff]">{user?.email}</span>
+            </div>
           </div>
           
           <Button title="logout" variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" color="#646cff"/>
+            <LogOut className="h-4 w-4 mr-2" color="#ff4848"/>
           </Button>
         </div>
       </div>

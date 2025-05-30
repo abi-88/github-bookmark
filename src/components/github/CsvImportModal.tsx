@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, Upload, Check, FileText, Github, Star, Code, AlertTriangle, Loader2 } from 'lucide-react';
+import { X, Upload, Check, FileText, Github, Star, Code, AlertTriangle, Loader2, InfoIcon } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
 import { getRepositoryDetails } from '../../services/githubService';
@@ -180,9 +180,15 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto p-6 pt-3">
           <div className="space-y-5 py-5">
+          <Alert className="bg-amber-50 border-amber-300">
+            <AlertDescription className="text-amber-700 text-xs flex bold">
+            <AlertTriangle className="h-4 w-4 text-amber-500 mr-2" />
+              Closing this window or reloading the page will cause you to lose any data that hasn't been saved.
+            </AlertDescription>
+          </Alert>
           <div className="flex items-center gap-3">
             <div className="relative w-full">
-              <div className="border-1 border-dashed border-[#646cff] rounded-lg p-6 flex flex-col items-center justify-center bg-gray-900 hover:bg-gray-800 transition-colors">
+              <div className="border-1 border-dashed border-[#646cff] rounded-lg p-6 flex flex-col items-center justify-center bg-gray-900 transition-colors">
                 <FileText className="h-10 w-10 text-[#646cff] mb-3" />
                 <p className="text-sm font-medium mb-1">Drag and drop your CSV file here, or click to browse</p>
                 <p className="text-xs text-[#8e8e8e] mb-3">CSV format: each line should contain a GitHub URL or repository in the format <code>owner/repo</code></p>
@@ -244,13 +250,7 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
             </div>
           </div>
 
-          <Alert className="bg-amber-50 border-amber-300">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
-            <AlertTitle className="text-amber-700">Warning</AlertTitle>
-            <AlertDescription className="text-amber-700">
-              Closing this window or reloading the page will cause you to lose any data that hasn't been saved.
-            </AlertDescription>
-          </Alert>
+          
           
           {isUploading && (
             <Alert className="bg-[#f0f0ff] border-[#646cff]">
