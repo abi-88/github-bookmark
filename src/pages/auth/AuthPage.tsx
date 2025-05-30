@@ -39,7 +39,7 @@ const AuthPage = () => {
         
         const {success,message} = await signup(username, email, password);
         if (success) {
-          showToast("Signup successful! Your account has been created.", "success");
+          showToast("Signup successful! Your account has been created. We have sent a verification email to your email address.", "success");
           setIsLogin(true);
         } else {
           showToast(message||"Signup failed: Email already exists", "error");
