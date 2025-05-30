@@ -6,7 +6,6 @@ import { getRepositoryDetails } from '../../services/githubService';
 import type { GithubRepo } from '../../types';
 import { Badge } from '../../components/ui/badge';
 import { Dialog, DialogContent } from '../ui/dialog';
-import { Progress } from '../ui/progress';
 import { useBookmarks } from '@/context/BookmarkContext';
 import { extractRepoInfo, parseCSV, readFileContent } from '@/lib/fileUtils';
 
@@ -262,17 +261,32 @@ export function CsvImportModal({ open, onOpenChange }: CsvImportModalProps) {
             </Alert>
           )}
           
-          
+          {/* Progress section */}
+          {(isValidating || progress > 0) && (
             <div className="space-y-2 mb-4">
               <div className="flex justify-between mb-1">
-                <span className="text-sm font-medium">Processing URLs: {processedUrls}/{totalUrls}</span>
-                <span className="text-sm font-medium">{Math.floor(progress)}%</span>
+                {progress < 100 ? (
+                  <>
+                    <span className="text-sm font-medium">Processing URLs: {processedUrls}/{totalUrls}</span>
+                    <span className="text-sm font-medium">{Math.floor(progress)}%</span>
+                  </>
+                ) : (
+                  <span className="text-sm font-medium text-[#0fa200] bold">Processing Complete: {totalUrls} URLs processed</span>
+                )}
               </div>
-              <Progress value={progress} className="h-2" />
-              <p className="text-xs text-gray-500 truncate mt-1">
-                Current: {currentUrl}
-              </p>
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-700">
+                <div 
+                  className={`h-full absolute top-0 left-0 transition-all ${progress === 100 ? 'bg-[#0fa200]' : 'bg-blue-600'}`}
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              {isValidating && currentUrl && (
+                <p className="text-xs text-gray-500 truncate mt-1">
+                  Currently processing: {currentUrl}
+                </p>
+              )}
             </div>
+          )}
         
           
           {error && (
