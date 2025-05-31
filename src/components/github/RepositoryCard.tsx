@@ -32,8 +32,8 @@ export function RepositoryCard({
   };
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md  border-[1px] border-[#737373]">
-      <CardContent className="p-4">
+    <Card className="overflow-hidden transition-all hover:shadow-md  border-[1px] border-[#737373] py-4">
+      <CardContent>
         <div className="flex items-start gap-4">
           <Avatar className="h-10 w-10 border">
             <AvatarImage src={repo.owner.avatar_url} alt={repo.owner.login} />

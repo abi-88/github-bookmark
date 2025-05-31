@@ -12,13 +12,13 @@ interface GithubTabsProps {
 
 export function GithubTabs({ activeTab }: GithubTabsProps) {
   const { bookmarks, removeBookmark, getBookmarkStats } = useBookmarks();
-  const [contentHeight, setContentHeight] = useState("calc(100vh - 250px)");
+  const [contentHeight, setContentHeight] = useState("calc(100vh - 350px)");
 
   // Calculate available height for scrollable content
   useEffect(() => {
     const updateHeight = () => {
-      // Adjust this value based on your header height and desired padding
-      setContentHeight(`calc(100vh - 250px)`);
+      // Reduced height to make all sections visible on screen
+      setContentHeight(`calc(100vh - 350px)`);
     };
     
     updateHeight();
@@ -27,7 +27,7 @@ export function GithubTabs({ activeTab }: GithubTabsProps) {
   }, []);
 
   return (
-    <Tabs value={activeTab} className="w-full mt-10 mb-10">
+    <Tabs value={activeTab} className="w-full">
       
       <TabsContent value="search" className="space-y-2">
         <Card className='border-0 bg-[#1e1e1e]' style={{
