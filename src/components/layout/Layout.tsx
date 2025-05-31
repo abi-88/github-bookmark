@@ -24,6 +24,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   },[user])
 
   return (
+  
     <div className="flex flex-col min-h-screen">
       <Header activeTab={activeTab} onTabChange={onTabChange} />
       <main className="flex-grow">

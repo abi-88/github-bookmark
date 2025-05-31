@@ -120,45 +120,40 @@ export function GithubSearch() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col space-y-4">
-        <SearchBar onSearch={handleSearch} isLoading={isLoading} setSearchType={setSearchType} searchType={searchType}/>
-        {/* {searchType=="users"?
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="include-users"
-            className='w-10 h-5 data-[state=checked]:bg-blue-500' 
-            checked={includeUserSearch} 
-            onCheckedChange={handleToggleUserSearch}
-          />
-          <Label htmlFor="include-users">Show user repositories</Label>
-        </div>:null} */}
+      <div className="sticky top-0 z-30 bg-[#1e1e1e] pt-1 pb-3">
+        <SearchBar 
+          onSearch={handleSearch} 
+          isLoading={isLoading} 
+          searchType={searchType}
+          setSearchType={setSearchType}
+        />
       </div>
-      
+
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="bg-red-900 border-red-500 text-white">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       
       {isLoading && (
         <div className="space-y-4">
-          {searchType === 'repositories' && (
-            <>
-              <h2 className="text-lg font-medium">Repositories</h2>
-              <div className="space-y-3">
-                {Array(3).fill(0).map((_, index) => (
-                  <RepositoryCardSkeleton key={index} />
-                ))}
-              </div>
-            </>
-          )}
-          
           {searchType === 'users' && (
             <>
               <h2 className="text-lg font-medium">Users</h2>
               <div className="space-y-3">
                 {Array(3).fill(0).map((_, index) => (
                   <UserCardSkeleton key={index} />
+                ))}
+              </div>
+            </>
+          )}
+          
+          {searchType === 'repositories' && (
+            <>
+              <h2 className="text-lg font-medium">Repositories</h2>
+              <div className="space-y-3">
+                {Array(3).fill(0).map((_, index) => (
+                  <RepositoryCardSkeleton key={index} />
                 ))}
               </div>
             </>
