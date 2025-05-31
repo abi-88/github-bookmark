@@ -39,27 +39,35 @@ export function BookmarkList({ bookmarks, onRemoveBookmark }: BookmarkListProps)
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 items-center">
-        <div className="relative flex-grow">
-          <Input
-            type="text"
-            placeholder="Search bookmarks..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-0 bg-gray-700 h-10"
-          />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <div className="sticky top-0 z-30 bg-[#1e1e1e] pt-1 pb-3">
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-grow">
+            <Input
+              type="text"
+              placeholder="Search bookmarks..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                // Scroll to top when searching
+                const contentElement = document.querySelector('.overflow-auto');
+                if (contentElement) {
+                  contentElement.scrollTop = 0;
+                }
+              }}
+              className="pl-10 border-0 bg-gray-700 h-10"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          </div>
+
+            <Button 
+              variant="default" 
+              onClick={() => setImportModalOpen(true)}
+              className="whitespace-nowrap bg-blue-600 hover:bg-blue-700 h-10"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Import CSV
+            </Button>
         </div>
-
-          <Button 
-            variant="default" 
-            onClick={() => setImportModalOpen(true)}
-            className="whitespace-nowrap bg-blue-600 hover:bg-blue-700 h-10"
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            Import CSV
-          </Button>
-
       </div>
       
       {importModalOpen && (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { GithubUser, GithubRepo } from '../../types';
 import { SearchBar } from './SearchBar';
 import { UserCard } from './UserCard';
@@ -11,39 +11,109 @@ import { UserCardSkeleton } from '../skelton/UserCardSkeleton';
 
 export function GithubSearch() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchType, setSearchType] = useState<'users' | 'repositories'>('repositories');
   const [users, setUsers] = useState<GithubUser[]>([]);
   const [repositories, setRepositories] = useState<GithubRepo[]>([]);
   const [expandedUsers, setExpandedUsers] = useState<string[]>([]);
   const [loadingRepos, setLoadingRepos] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
-  const includeUserSearch =  searchType =="users"
+  const includeUserSearch = searchType === "users";
+  
+  // Reference to the content element for infinite scroll
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  
+  // Function to load more results when scrolling
+  const loadMoreResults = async () => {
+    if (isLoading || isLoadingMore || !hasMore || !searchQuery) return;
+    
+    setIsLoadingMore(true);
+    const nextPage = currentPage + 1;
+    
+    try {
+      if (searchType === 'users') {
+        const { users: moreUsers } = await searchUsers(searchQuery, nextPage);
+        setUsers(prev => [...prev, ...moreUsers]);
+        setHasMore(users.length + moreUsers.length < totalCount);
+      } else {
+        const { repositories: moreRepos } = await searchRepositories(searchQuery, nextPage);
+        setRepositories(prev => [...prev, ...moreRepos]);
+        setHasMore(repositories.length + moreRepos.length < totalCount);
+      }
+      setCurrentPage(nextPage);
+    } catch (err) {
+      setError('Failed to load more results. Please try again.');
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+  
+  // Setup scroll event listener for infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const contentElement = document.querySelector('.overflow-auto');
+      if (!contentElement) return;
+      
+      const { scrollTop, scrollHeight, clientHeight } = contentElement;
+      
+      // When user scrolls to bottom (with 100px threshold), load more results
+      if (scrollHeight - scrollTop - clientHeight < 100 && !isLoading && !isLoadingMore && hasMore) {
+        loadMoreResults();
+      }
+    };
+    
+    const contentElement = document.querySelector('.overflow-auto');
+    if (contentElement) {
+      contentElement.addEventListener('scroll', handleScroll);
+    }
+    
+    return () => {
+      if (contentElement) {
+        contentElement.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [isLoading, isLoadingMore, hasMore, searchType, searchQuery, currentPage, totalCount, repositories.length, users.length]);
 
   const handleSearch = async (query: string, type: 'users' | 'repositories') => {
     setIsLoading(true);
-    setError(null);
+    setError("");
     setSearchType(type);
+    setSearchQuery(query);
+    setCurrentPage(1);
     setExpandedUsers([]);
     setLoadingRepos([]);
     setRepositories([]);
+    setUsers([]);
+    
+    // Scroll to top when performing a new search
+    const contentElement = document.querySelector('.overflow-auto');
+    if (contentElement) {
+      contentElement.scrollTop = 0;
+    }
     
     try {
       if (type === 'users') {
         // For user search, only fetch users initially
-        const userResults = await searchUsers(query);
+        const { users: userResults, totalCount: userCount } = await searchUsers(query, 1);
         setUsers(userResults);
+        setTotalCount(userCount);
+        setHasMore(userResults.length < userCount);
       } else if (type === 'repositories') {
         // For repository search
-        const repoResults = await searchRepositories(query);
+        const { repositories: repoResults, totalCount: repoCount } = await searchRepositories(query, 1);
         setRepositories(repoResults);
+        setTotalCount(repoCount);
+        setHasMore(repoResults.length < repoCount);
         
         if (includeUserSearch) {
           // If user search is included, fetch users as well
-          const userResults = await searchUsers(query);
+          const { users: userResults } = await searchUsers(query, 1);
           setUsers(userResults);
-        } else {
-          setUsers([]);
         }
       }
     } catch (err) {
@@ -112,53 +182,43 @@ export function GithubSearch() {
   //   } else if (!newIncludeUserSearch) {
   //     // If we're disabling user search, clear users and expanded users
   //     setUsers([]);
-  //     setExpandedUsers([]);
-  //     // Also clear any user repositories
-  //     setRepositories(prev => prev.filter(repo => !repo._ownerUsername));
-  //   }
-  // };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col space-y-4">
-        <SearchBar onSearch={handleSearch} isLoading={isLoading} setSearchType={setSearchType} searchType={searchType}/>
-        {/* {searchType=="users"?
-        <div className="flex items-center space-x-2">
-          <Switch 
-            id="include-users"
-            className='w-10 h-5 data-[state=checked]:bg-blue-500' 
-            checked={includeUserSearch} 
-            onCheckedChange={handleToggleUserSearch}
-          />
-          <Label htmlFor="include-users">Show user repositories</Label>
-        </div>:null} */}
+    <div className="space-y-4" ref={contentRef}>
+      <div className="sticky top-0 z-30 bg-[#1e1e1e] pt-1 pb-3">
+        <SearchBar 
+          onSearch={handleSearch} 
+          isLoading={isLoading} 
+          searchType={searchType} 
+          setSearchType={setSearchType} 
+        />
       </div>
-      
+
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="bg-red-900 border-red-500 text-white">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       
       {isLoading && (
         <div className="space-y-4">
-          {searchType === 'repositories' && (
-            <>
-              <h2 className="text-lg font-medium">Repositories</h2>
-              <div className="space-y-3">
-                {Array(3).fill(0).map((_, index) => (
-                  <RepositoryCardSkeleton key={index} />
-                ))}
-              </div>
-            </>
-          )}
-          
           {searchType === 'users' && (
             <>
               <h2 className="text-lg font-medium">Users</h2>
               <div className="space-y-3">
                 {Array(3).fill(0).map((_, index) => (
                   <UserCardSkeleton key={index} />
+                ))}
+              </div>
+            </>
+          )}
+          
+          {searchType === 'repositories' && (
+            <>
+              <h2 className="text-lg font-medium">Repositories</h2>
+              <div className="space-y-3">
+                {Array(3).fill(0).map((_, index) => (
+                  <RepositoryCardSkeleton key={index} />
                 ))}
               </div>
             </>
@@ -252,6 +312,23 @@ export function GithubSearch() {
               <p className="mt-2 text-md text-gray-500 max-w-md">
                 Try searching with different keywords or check for typos.
               </p>
+            </div>
+          )}
+          
+          {/* Loading more indicator */}
+          {isLoadingMore && (
+            <div className="flex justify-center py-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-5 h-5 border-2 border-t-[#646cff] border-gray-300 rounded-full animate-spin"></div>
+                <span className="text-gray-400">Loading more results...</span>
+              </div>
+            </div>
+          )}
+          
+          {/* End of results message */}
+          {!isLoading && !isLoadingMore && !hasMore && (searchQuery && (users.length > 0 || repositories.length > 0)) && (
+            <div className="text-center py-4 text-gray-500">
+              End of results
             </div>
           )}
         </>

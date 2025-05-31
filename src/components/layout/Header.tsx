@@ -20,7 +20,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-10 w-full py-3 border-b border-b-[1px] border-[#494949] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-[0_2px_4px_0_rgba(107,114,128,0.3)]">
+    <header className="sticky top-0 z-50 w-full py-3 border-b border-b-[1px] border-[#494949] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-[0_2px_4px_0_rgba(107,114,128,0.3)]">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Github className="h-6 w-6" color="#646cff"/>
