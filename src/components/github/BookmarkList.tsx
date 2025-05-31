@@ -46,7 +46,14 @@ export function BookmarkList({ bookmarks, onRemoveBookmark }: BookmarkListProps)
               type="text"
               placeholder="Search bookmarks..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                // Scroll to top when searching
+                const contentElement = document.querySelector('.overflow-auto');
+                if (contentElement) {
+                  contentElement.scrollTop = 0;
+                }
+              }}
               className="pl-10 border-0 bg-gray-700 h-10"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />

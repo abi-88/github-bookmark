@@ -22,11 +22,17 @@ export function GithubSearch() {
 
   const handleSearch = async (query: string, type: 'users' | 'repositories') => {
     setIsLoading(true);
-    setError(null);
+    setError("");
     setSearchType(type);
     setExpandedUsers([]);
     setLoadingRepos([]);
     setRepositories([]);
+    
+    // Scroll to top when performing a new search
+    const contentElement = document.querySelector('.overflow-auto');
+    if (contentElement) {
+      contentElement.scrollTop = 0;
+    }
     
     try {
       if (type === 'users') {
